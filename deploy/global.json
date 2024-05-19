@@ -1,0 +1,15 @@
+{
+    "scriptShell": "pwsh",
+    "scripts": {
+      "check-profile": "if (!$env:AZURE_STORAGE_ACCOUNT) { Write-Error 'AZURE_STORAGE_ACCOUNT is not set'; exit 1; } elseif (!$env:AZURE_STORAGE_KEY) { Write-Error 'AZURE_STORAGE_KEY is not set'; exit 1; }",
+      
+      "login-dev": "dotnet r check-profile && pulumi login 'azblob://development'",
+      "login-prod": "dotnet r check-profile && pulumi login 'azblob://production'",
+  
+      "preview-dev": "dotnet r check-profile && dotnet r login-dev && pulumi preview -s development --diff --suppress-outputs",
+      "deploy-dev": "dotnet r check-profile && dotnet r login-dev && pulumi up -y -s development",
+  
+      "preview-prod": "dotnet r check-profile && dotnet r login-prod && pulumi preview -s production --diff --suppress-outputs",
+      "deploy-prod": "dotnet r check-profile && dotnet r login-prod && pulumi up -y -s production"
+    }
+}

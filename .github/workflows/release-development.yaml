@@ -29,5 +29,5 @@ jobs:
           username: ${{ secrets.ECR_USERNAME }}
           password: ${{ secrets.ECR_PASSWORD }}
       - run: |
-          docker build ./src/BackendService/Dockerfile -t ${{ secrets.ECR_LOGIN_SERVER }}/expense-lens-service:${{ github.sha }}
+          docker build -f src/BackendService/Dockerfile -t ${{ secrets.ECR_LOGIN_SERVER }}/expense-lens-service:${{ github.sha }}
           docker push ${{ secrets.ECR_LOGIN_SERVER }}/expense-lens-service:${{ github.sha }}

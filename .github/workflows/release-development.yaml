@@ -1,5 +1,9 @@
-name: deploy ExpenseLens to development environment
+name: Deploy ExpenseLens to development environment
 on: [push]
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build-backend:

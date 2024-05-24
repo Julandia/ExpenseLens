@@ -28,6 +28,12 @@ jobs:
           login-server: ${{ secrets.ECR_LOGIN_SERVER }}
           username: ${{ secrets.ECR_USERNAME }}
           password: ${{ secrets.ECR_PASSWORD }}
-      - run: |
-          docker buildx build -f src/BackendService/Dockerfile -t ${{ secrets.ECR_LOGIN_SERVER }}/expense-lens-service:${{ github.sha }}
-          docker push ${{ secrets.ECR_LOGIN_SERVER }}/expense-lens-service:${{ github.sha }}
+
+      - uses: docker/build-push-action@v2
+        name: Build & push Docker image
+        with:
+          image: ${{ secrets.ECR_LOGIN_SERVER }}/expense-lens-service:${{ github.sha }}
+          registry: ${{ secrets.ECR_LOGIN_SERVER }}
+          dockerfile: src/BackendService/Dockerfile
+          username: ${{ secrets.ECR_USERNAME }}
+          password: Build & push Docker image

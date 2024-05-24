@@ -29,11 +29,9 @@ jobs:
           username: ${{ secrets.ECR_USERNAME }}
           password: ${{ secrets.ECR_PASSWORD }}
 
-      - uses: docker/build-push-action@v2
-        name: Build & push Docker image
+      - name: Build & push Docker image
+        uses: docker/build-push-action@v2
         with:
-          image: ${{ secrets.ECR_LOGIN_SERVER }}/expense-lens-service:${{ github.sha }}
-          registry: ${{ secrets.ECR_LOGIN_SERVER }}
-          dockerfile: src/BackendService/Dockerfile
-          username: ${{ secrets.ECR_USERNAME }}
-          password: Build & push Docker image
+          tags: ${{ secrets.ECR_LOGIN_SERVER }}/expense-lens-service:${{ github.sha }}
+          push: true
+          file: src/BackendService/Dockerfile

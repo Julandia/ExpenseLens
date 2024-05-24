@@ -34,4 +34,4 @@ jobs:
         with:
           tags: ${{ secrets.ECR_LOGIN_SERVER }}/expense-lens-service:${{ github.sha }}
           push: true
-          directory: src/BackendService
+          file: Dockerfile

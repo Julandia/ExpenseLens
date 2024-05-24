@@ -37,5 +37,5 @@ jobs:
         with:
           tags: ${{ secrets.ECR_LOGIN_SERVER }}/expense-lens-service:${{ github.sha }}
           push: true
-          context: ./src/BackendService
-          file: ./Dockerfile
+          context: .
+          file: ./Dockerfile_Backend

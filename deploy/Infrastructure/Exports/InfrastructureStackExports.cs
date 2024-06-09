@@ -62,13 +62,13 @@ public class InfrastructureStackExports : IInfrastructureStackExports
     }
 
     public T? GetValue<T>(string resourceName, string resourceOutputKey) where T : class
-        => InternalGetValue<T>($"{resourceName}-{_config.DeploymentEnvironment.CurrentEnvironment.Name}-{_config.DeploymentEnvironment.CurrentRegion.Region}", resourceOutputKey);
+        => InternalGetValue<T>($"{resourceName}-{_config.DeploymentEnvironment.CurrentEnvironment.Name}-{_config.DeploymentEnvironment.CurrentRegion.Name}", resourceOutputKey);
 
     public T? GetGlobalValue<T>(string resourceName, string resourceOutputKey) where T : class
         => InternalGetValue<T>(resourceName, resourceOutputKey);
 
     public T? GetPerRegionValue<T>(string resourceName, string resourceOutputKey) where T : class
-        => InternalGetValue<T>($"{resourceName}-{_config.DeploymentEnvironment.Name}-{_config.DeploymentEnvironment.CurrentRegion.Region}", resourceOutputKey);
+        => InternalGetValue<T>($"{resourceName}-{_config.DeploymentEnvironment.Name}-{_config.DeploymentEnvironment.CurrentRegion.Name}", resourceOutputKey);
 
     private T? InternalGetValue<T>(string resourceName, string resourceOutputKey) where T : class
     {

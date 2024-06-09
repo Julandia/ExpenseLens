@@ -13,7 +13,6 @@ jobs:
       run:
         shell: bash
     steps:
-      # checkout the repo
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v4
 
@@ -33,9 +32,47 @@ jobs:
           password: ${{ secrets.ECR_PASSWORD }}
 
       - name: Build & push Docker image
+        id: backend_image
         uses: docker/build-push-action@v2
         with:
           tags: ${{ secrets.ECR_LOGIN_SERVER }}/expense-lens-service:${{ github.sha }}
           push: true
           context: .
           file: ./Dockerfile_Backend
+
+  deploy:
+    runs-on: ubuntu-latest
+    environment: development
+    name: Deploy ExpenseLens to development
+    needs: [ build-backend ]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v4
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+
+      - name: OIDC Login to Azure Public Cloud with AzPowershell (enableAzPSSession true)
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+
+      - uses: pulumi/actions@v5.2.3
+        name: Deploy infrastructure to development
+        env:
+          BACKEND_SERVICE_IMAGE_TAG: ${{ secrets.ECR_LOGIN_SERVER }}/expense-lens-service:${{ github.sha }}
+          AZURE_STORAGE_ACCOUNT: ${{ secrets.PULUMI_AZURE_STORAGE_ACCOUNT }}
+          AZURE_STORAGE_KEY: ${{ secrets.PULUMI_AZURE_STORAGE_KEY }}
+        with:
+          command: up
+          stack-name: development
+          work-dir: deploy
+          cloud-url: azblob://development
+          suppress-outputs: true
+          suppress-progress: true

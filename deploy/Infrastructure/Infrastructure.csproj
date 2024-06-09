@@ -11,6 +11,7 @@
     <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
       <PackageReference Include="Pulumi" Version="3.63.1" />
+      <PackageReference Include="Scrutor" Version="4.2.2" />
     </ItemGroup>
 
 </Project>

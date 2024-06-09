@@ -8,27 +8,26 @@ public static class ServiceProviderExtensions
     public static IServiceProvider CreateServiceProvider<TAssemblyType>(ServiceProviderBuilderOptions options)
     {
         var services = new ServiceCollection();
-        // services.AddSingleton(_ => ConfigReader.LoadConfig(options.ConfigsPath))
-        //     .RegisterPulumiSharedResources(options.UsePulumiConfigDecryption, options.SkipPulumiSetup);
+        services.AddSingleton(_ => ConfigReader.LoadConfig(options.ConfigsPath));
 
         AddPulumiResourcesClasses<TAssemblyType, IPulumiRegionalResource>(services, ServiceLifetime.Scoped);
         AddPulumiResourcesClasses<TAssemblyType, IPulumiGlobalResource>(services, ServiceLifetime.Singleton);
 
-        // services.Scan(selector =>
-        // {
-        //     selector.FromAssemblyOf<ResourceNames>()
-        //         .AddClasses(classes => classes.AssignableTo<ResourceNames>())
-        //         .AsSelf()
-        //         .WithSingletonLifetime();
-        // });
-        //
-        // services.Scan(selector =>
-        // {
-        //     selector.FromAssemblyOf<TAssemblyType>()
-        //         .AddClasses(classes => classes.AssignableTo<ResourceNames>())
-        //         .AsSelf()
-        //         .WithSingletonLifetime();
-        // });
+        services.Scan(selector =>
+        {
+            selector.FromAssemblyOf<ResourceNames>()
+                .AddClasses(classes => classes.AssignableTo<ResourceNames>())
+                .AsSelf()
+                .WithSingletonLifetime();
+        });
+
+        services.Scan(selector =>
+        {
+            selector.FromAssemblyOf<TAssemblyType>()
+                .AddClasses(classes => classes.AssignableTo<ResourceNames>())
+                .AsSelf()
+                .WithSingletonLifetime();
+        });
 
         options.ConfigureServices?.Invoke(services);
 

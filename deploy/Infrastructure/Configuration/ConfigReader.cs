@@ -12,7 +12,6 @@ public static class ConfigReader
         var configsPath = GetConfigsDirectoryPath(configsDirectory);
         var environments = LoadConfigPart<List<DeploymentEnvironment>>(configsPath, "deployment-environments.json");
         var tags = LoadConfigPart<DefaultTags>(configsPath, "default-tags.json");
-        var services = LoadConfigPart<List<ServiceDefinition>>(configsPath, "services.json");
 
         var deploymentEnv = environments.SingleOrDefault(x => x.Name == stack);
 
@@ -26,7 +25,6 @@ public static class ConfigReader
             AllDeploymentEnvironments = environments,
             DeploymentEnvironment = deploymentEnv,
             DefaultResourceTags = tags.Tags,
-            Services = services,
         };
     }
 

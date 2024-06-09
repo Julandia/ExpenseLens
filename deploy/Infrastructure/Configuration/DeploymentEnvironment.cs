@@ -4,7 +4,9 @@ public class DeploymentEnvironment
 {
     public required string Name { get; set; }
 
-    public required string AwsAccountId { get; set; }
+    public required string SubscriptionId { get; set; }
+
+    public required string ResourceGroup { get; set; }
 
     public IList<DeploymentRegion> Regions { get; set; } = new List<DeploymentRegion>();
 
@@ -19,6 +21,4 @@ public class DeploymentEnvironment
     public bool IsQa => Name.Equals("qa", StringComparison.OrdinalIgnoreCase);
 
     public bool IsDevelopment => Name.Equals("development", StringComparison.OrdinalIgnoreCase);
-
-    public bool IsAdmin => Name.Equals("admin", StringComparison.OrdinalIgnoreCase);
 }

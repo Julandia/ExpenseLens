@@ -7,5 +7,4 @@ public record DeploymentConfig(string Stack)
     public DeploymentEnvironment DeploymentEnvironment { get; init; } = default!;
 
     public required Dictionary<string, string> DefaultResourceTags { get; init; } = new();
-    public required List<ServiceDefinition> Services { get; init; }
 }

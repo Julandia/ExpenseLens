@@ -31,7 +31,7 @@ jobs:
 
       - name: Build Azure Function and Zip
         run: |
-          dotnet build src/Functions/Functions.csproj ./publish /p:DeployOnBuild=true /p:DeployTarget=Package;CreatePackageOnPublish=true -c Release -o
+          dotnet build src/Functions/Functions.csproj /p:DeployOnBuild=true /p:DeployTarget=Package;CreatePackageOnPublish=true -c Release -o ./publish
           cd publish
           zip -r ../ExpenseLensFunctions.zip .
 

@@ -34,10 +34,11 @@ jobs:
           dotnet build src/Functions/Functions.csproj -c Release -o ./publish -p:DeployOnBuild=true -p:'DeployTarget=Package;CreatePackageOnPublish=true'
           cd publish
           zip -r ../ExpenseLensFunctions.zip .
+          cd ..
 
       - name: Upload to storage using CLI
         uses: azure/CLI@v1
         with:
           azcliversion: latest
           inlineScript: |
-            az storage blob upload-batch --account-name ${{ secrets.FUNCTION_STORAGE_ACCOUNT_NAME }} -d 'function' -s ../ExpenseLensFunctions.zip
+            az storage blob upload-batch --account-name ${{ secrets.FUNCTION_STORAGE_ACCOUNT_NAME }} -d 'function' -s . --pattern "*.zip"

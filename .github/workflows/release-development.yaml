@@ -28,6 +28,8 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.x
+
+      - name: Build Azure Function and Zip
         run: |
           dotnet build src/Functions/Functions.csproj ./publish /p:DeployOnBuild=true /p:DeployTarget=Package;CreatePackageOnPublish=true -c Release -o
           cd publish

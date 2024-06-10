@@ -24,14 +24,14 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
 
-      - name: Build Azure Function and Zip
+      - name: Setup dotnet
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.x
 
       - name: Build Azure Function and Zip
         run: |
-          dotnet build src/Functions/Functions.csproj /p:DeployOnBuild=true /p:DeployTarget=Package;CreatePackageOnPublish=true -c Release -o ./publish
+          dotnet build src/Functions/Functions.csproj /p:DeployOnBuild=true /p:DeployTarget=Package;CreatePackageOnPublish=true -o ./publish
           cd publish
           zip -r ../ExpenseLensFunctions.zip .
 

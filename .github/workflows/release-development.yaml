@@ -24,14 +24,10 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
 
-      - name: Setup dotnet
+      - name: Build Azure Function and Zip
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.x
-          cache: true
-          cache-dependency-path: '**/packages.lock.json'
-
-      - name: Build Azure Function and Zip
         run: |
           dotnet build src/Functions/Functions.csproj ./publish /p:DeployOnBuild=true /p:DeployTarget=Package;CreatePackageOnPublish=true -c Release -o
           cd publish

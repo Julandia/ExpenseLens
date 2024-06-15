@@ -9,6 +9,8 @@ namespace Deploy.ExpenseLens.BackendService;
 
 public class BackendContainerApps : IPulumiRegionalResource
 {
+    public Output<string> Endpoint { get; }
+
     public BackendContainerApps(DeploymentConfig config,
         BackendServiceResourceNames names,
         ExpenseLensResourceGroup resourceGroup,
@@ -106,5 +108,6 @@ public class BackendContainerApps : IPulumiRegionalResource
                 UserAssignedIdentities = containerRegistry.AccessIdentityPrincipalId,
             },
         });
+        Endpoint = Output.Format($"https://{containerApp.LatestRevisionFqdn}");
     }
 }

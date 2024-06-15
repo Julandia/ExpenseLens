@@ -23,7 +23,7 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ github.token }}
-          release_branches: main
+          release_branches: feature/EK-4-initialize-deploy-project
           tag_prefix: v
 
       - name: Create a GitHub release
@@ -94,7 +94,7 @@ jobs:
 
       - name: Build Azure Function and Zip
         run: |
-          dotnet build src/Functions/Functions.csproj -c Release -p:DeployOnBuild=true -p:'DeployTarget=Package;CreatePackageOnPublish=true'
+          dotnet build src/Functions/Functions.csproj -c Release -o Publish -p:DeployOnBuild=true -p:'DeployTarget=Package;CreatePackageOnPublish=true'
           cd Publish
           zip -r ../ExpenseLensFunctions-${{ needs.prepare-variables.outputs.new_version }}.zip .
           cd ..
@@ -110,7 +110,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ needs.prepare-variables.outputs.deployment_environment }}
     name: Deploy ExpenseLens to development
-    needs: [ build-backend ]
+    needs: [ build-backend, build-function ]
     defaults:
       run:
         shell: bash

@@ -46,6 +46,9 @@ jobs:
       run:
         shell: bash
     steps:
+      - name: print backend_image_tag
+        run: echo "backend_image_tag = ${{ needs.prepare-variables.outputs.backend_image_tag }}"
+
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v4
 

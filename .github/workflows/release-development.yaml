@@ -117,7 +117,7 @@ jobs:
     runs-on: windows-latest
     environment: ${{ needs.prepare-variables.outputs.deployment_environment }}
     needs: [deploy-pulumi]
-    if: ${{ env.AZURE_FUNCTIONAPP_NAME != '' }}
+    if: ${{ vars.AZURE_FUNCTIONAPP_NAME != '' }}
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v4
@@ -138,6 +138,6 @@ jobs:
         uses: Azure/functions-action@v1
         id: fa
         with:
-          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          app-name: ${{ vars.AZURE_FUNCTIONAPP_NAME }}
           package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/Publish'
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}

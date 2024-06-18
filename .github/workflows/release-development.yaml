@@ -77,8 +77,8 @@ jobs:
   deploy-pulumi:
     runs-on: ubuntu-latest
     environment: ${{ needs.prepare-variables.outputs.deployment_environment }}
-    name: Deploy ExpenseLens to development
-    needs: [ build-backend ]
+    name: Deploy ExpenseLens Pulumi
+    needs: [ prepare-variables, build-backend ]
     defaults:
       run:
         shell: bash

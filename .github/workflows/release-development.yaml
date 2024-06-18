@@ -107,8 +107,8 @@ jobs:
           AZURE_STORAGE_KEY: ${{ secrets.PULUMI_AZURE_STORAGE_KEY }}
         with:
           command: up
-          stack-name: development
-          work-dir: deploy
+          stack-name: organization/DeployExpenseLens/development
+          work-dir: deploy/ExpenseLens
           cloud-url: azblob://development
           suppress-outputs: true
           suppress-progress: true
@@ -116,7 +116,7 @@ jobs:
   build-and-deploy-function:
     runs-on: windows-latest
     environment: ${{ needs.prepare-variables.outputs.deployment_environment }}
-    needs: [deploy-pulumi]
+    needs: [prepare-variables, deploy-pulumi]
     if: ${{ vars.AZURE_FUNCTIONAPP_NAME != '' }}
     steps:
       - name: 'Checkout GitHub Action'

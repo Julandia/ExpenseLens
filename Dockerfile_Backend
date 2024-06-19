@@ -4,7 +4,7 @@ WORKDIR /App
 EXPOSE 8080
 EXPOSE 8081
 # Copy everything
-COPY . ./
+COPY ./src/BackendService ./
 # Restore as distinct layers
 RUN dotnet restore
 # Build and publish a release

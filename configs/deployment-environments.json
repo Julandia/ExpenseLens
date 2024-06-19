@@ -1,0 +1,24 @@
+[
+  {
+    "name": "development",
+    "subscriptionId": "6888d147-d0a6-4a03-b332-35b67ed316df",
+    "resourceGroup": "expenselens-development",
+    "regions": [
+      { "name": "northeurope", "isPrimary": true }
+    ],
+    "environments": [
+      { "name": "development", "multiRegionSupport": true, "isPrimary": true }
+    ]
+  },
+  {
+    "name": "production",
+    "subscriptionId": "6888d147-d0a6-4a03-b332-35b67ed316df",
+    "resourceGroup": "expenselens-production",
+    "regions": [
+      { "name": "northeurope", "isPrimary": true }
+    ],
+    "environments": [
+      { "name": "production", "multiRegionSupport": true, "isPrimary": true }
+    ]
+  }
+]

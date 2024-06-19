@@ -1,0 +1,148 @@
+name: Deploy ExpenseLens to development environment
+on: [push]
+
+permissions:
+  id-token: write
+  contents: write
+
+env:
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'       # set this to the path to your function app project, defaults to the repository root
+  DOTNET_VERSION: '8.0.x'                   # set this to the dotnet version to use (e.g. '2.1.x', '3.1.x', '5.0.x')
+
+jobs:
+  prepare-variables:
+    runs-on: ubuntu-latest
+    name: Prepare required variables
+    outputs:
+      deployment_environment: 'development'
+      new_tag: ${{ steps.tag_version.outputs.new_tag }}
+      new_version: ${{ steps.tag_version.outputs.new_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ github.token }}
+          release_branches: feature/EK-4-initialize-deploy-project
+          tag_prefix: v
+
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
+
+  build-backend:
+    needs: [prepare-variables]
+    runs-on: ubuntu-latest
+    environment: ${{ needs.prepare-variables.outputs.deployment_environment }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: print backend_image_tag
+        run: echo "${{ secrets.ACR_LOGIN_SERVER }}/expense-lens-service:${{ needs.prepare-variables.outputs.new_tag }}"
+
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v4
+
+      - name: OIDC Login to Azure Public Cloud with AzPowershell (enableAzPSSession true)
+        uses: azure/login@v2.1.1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+
+      - name: Docker login
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build & push Docker image
+        id: backend_image
+        uses: docker/build-push-action@v2
+        with:
+          tags: ${{ secrets.ACR_LOGIN_SERVER }}/expense-lens-service:${{ needs.prepare-variables.outputs.new_tag }}
+          push: true
+          context: .
+          file: ./Dockerfile_Backend
+
+#  deploy-pulumi:
+#    runs-on: ubuntu-latest
+#    environment: ${{ needs.prepare-variables.outputs.deployment_environment }}
+#    name: Deploy ExpenseLens Pulumi
+#    needs: [ prepare-variables, build-backend ]
+#    defaults:
+#      run:
+#        shell: bash
+#    env:
+#      BACKEND_IMAGE_TAG: ${{ needs.prepare-variables.outputs.backend_image_tag }}
+#    steps:
+#      - name: 'Checkout GitHub Action'
+#        uses: actions/checkout@v4
+#
+#      - name: Setup dotnet
+#        uses: actions/setup-dotnet@v4
+#
+#      - name: OIDC Login to Azure Public Cloud with AzPowershell (enableAzPSSession true)
+#        uses: azure/login@v2.1.1
+#        with:
+#          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+#          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+#          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+#          enable-AzPSSession: true
+#
+#      - uses: pulumi/actions@v5.2.3
+#        name: Deploy infrastructure to development
+#        env:
+#          BACKEND_SERVICE_IMAGE_TAG: $BACKEND_IMAGE_TAG
+#          AZURE_STORAGE_ACCOUNT: ${{ secrets.PULUMI_AZURE_STORAGE_ACCOUNT }}
+#          AZURE_STORAGE_KEY: ${{ secrets.PULUMI_AZURE_STORAGE_KEY }}
+#          ARM_USE_OIDC: true
+#          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+#          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+#          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+#        with:
+#          command: up
+#          stack-name: organization/DeployExpenseLens/development
+#          work-dir: deploy/ExpenseLens
+#          cloud-url: azblob://development
+#          suppress-outputs: true
+#          suppress-progress: true
+#
+#  build-and-deploy-function:
+#    runs-on: windows-latest
+#    environment: ${{ needs.prepare-variables.outputs.deployment_environment }}
+#    needs: [prepare-variables, deploy-pulumi]
+#    name: Deploy to FunctionApp ${{ vars.AZURE_FUNCTIONAPP_NAME }}
+##    if: ${{ vars.AZURE_FUNCTIONAPP_NAME != '' }}
+#    steps:
+#      - name: 'Checkout GitHub Action'
+#        uses: actions/checkout@v4
+#
+#      - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+#        uses: actions/setup-dotnet@v4
+#        with:
+#          dotnet-version: ${{ env.DOTNET_VERSION }}
+#
+#      - name: 'Resolve Project Dependencies Using Dotnet'
+#        shell: pwsh
+#        run: |
+#          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+#          dotnet build src/Functions/Functions.csproj --configuration Release --output ./Publish
+#          popd
+#
+#      - name: 'Run Azure Functions Action'
+#        uses: Azure/functions-action@v1
+#        id: fa
+#        with:
+#          app-name: ${{ vars.AZURE_FUNCTIONAPP_NAME }}
+#          package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/Publish'
+#          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}

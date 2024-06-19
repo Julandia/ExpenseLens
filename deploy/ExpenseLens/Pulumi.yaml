@@ -1,0 +1,7 @@
+name: DeployExpenseLens
+runtime: dotnet
+description: Deploy ExpenseLens system
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: ExpenseLens

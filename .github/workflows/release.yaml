@@ -58,7 +58,7 @@ jobs:
       - uses: pulumi/actions@v5.2.3
         name: Deploy infrastructure to development
         env:
-          BACKEND_SERVICE_IMAGE_TAG: ${{ secrets.ACR_LOGIN_SERVER }}/expense-lens-service:${{ needs.prepare-variables.outputs.new_version }}
+          : ${{ needs.prepare-variables.outputs.new_version }}
           AZURE_STORAGE_ACCOUNT: ${{ secrets.PULUMI_AZURE_STORAGE_ACCOUNT }}
           AZURE_STORAGE_KEY: ${{ secrets.PULUMI_AZURE_STORAGE_KEY }}
           ARM_USE_OIDC: true

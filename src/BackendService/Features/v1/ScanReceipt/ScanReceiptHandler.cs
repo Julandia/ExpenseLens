@@ -2,7 +2,7 @@ using Azure;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
 using BackendService.Configuration;
 using BackendService.Features.Infrastructure;
-using BackendService.Repositories;
+using BackendService.Repositories.Database;
 using BackendService.Repositories.FileStorage;
 using BackendService.Repositories.Models;
 using Microsoft.Extensions.Options;
@@ -43,7 +43,10 @@ public class ScanReceiptHandler : IRequestHandler<ScanReceiptsRequest, OneOf<Not
         }
 
         var receipts = await ProcessReceipt(request.FileName);
-        await _expenseRepository.SaveReceiptsAsync(receipts, cancellationToken);
+        if (receipts.Count > 0)
+        {
+            await _expenseRepository.SaveReceiptAsync(receipts.First(), cancellationToken);
+        }
 
         _logger.LogInformation("{Count} receipts are processed", receipts.Count);
         return new Success<IEnumerable<ScanReceiptResponse>>(receipts.Select(receipt => new ScanReceiptResponse(receipt.MerchantName, receipt.Date, receipt.TotalPrice, receipt.Items.Count)));
@@ -103,7 +106,12 @@ public class ScanReceiptHandler : IRequestHandler<ScanReceiptsRequest, OneOf<Not
                 : 0;
             _logger.LogInformation("Total: '{Total}', with confidence '{Confidence}'", total, totalField?.Confidence);
 
-            receipts.Add(new Receipt(merchantName, transactionDate.DateTime, total, items));
+            receipts.Add(new Receipt {
+                    MerchantName = merchantName,
+                    Date = transactionDate.DateTime,
+                    TotalPrice = total,
+                    Items = items,
+                });
         }
 
         return receipts;

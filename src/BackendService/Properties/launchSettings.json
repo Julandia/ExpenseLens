@@ -30,11 +30,14 @@
       "applicationUrl": "https://localhost:7289;http://localhost:5177",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "AzureAiVision__Endpoint": "https://northeurope.api.cognitive.microsoft.com/",
-        "AzureAiVision__ApiKey": "7488178ccedb486d8146a999fb4fcb6e",
-        "BlobStorage__ConnectionString": "DefaultEndpointsProtocol=https;AccountName=lensdocuments04d01935;AccountKey=xRrPcWiwIcwZvFSjE0Uy8RSGe+w7JKJkK/e7u5uPtYtFIQ5g70XI5wVJaS+DC/s6QZqyWZftIz26+AStI10vPQ==;EndpointSuffix=core.windows.net",
-        "BlobStorage__StorageAccountName": "lensdocuments04d01935",
-        "BlobStorage__ReceiptsContainerName": "receipts"
+        "AzureAiVision__Endpoint": "",
+        "AzureAiVision__ApiKey": "",
+        "BlobStorage__ConnectionString": "",
+        "BlobStorage__StorageAccountName": "",
+        "BlobStorage__ReceiptsContainerName": "receipts",
+        "CosmosDb__ConnectionString": "",
+        "CosmosDb__DatabaseName": "",
+        "CosmosDb__DocumentsContainerName": ""
       }
     },
     "IIS Express": {

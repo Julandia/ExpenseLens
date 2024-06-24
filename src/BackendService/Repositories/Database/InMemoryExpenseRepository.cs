@@ -1,6 +1,6 @@
 using BackendService.Repositories.Models;
 
-namespace BackendService.Repositories;
+namespace BackendService.Repositories.Database;
 
 public class InMemoryExpenseRepository : IExpenseRepository
 {
@@ -12,9 +12,15 @@ public class InMemoryExpenseRepository : IExpenseRepository
         return Task.CompletedTask;
     }
 
-    public Task<Receipt> GetReceiptAsync(Guid receiptId, CancellationToken cancellationToken = default)
+    public Task SaveReceiptAsync(Receipt receipt, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
+    }
+
+    public Task<Receipt?> GetReceiptAsync(string receiptId, CancellationToken cancellationToken = default)
+    {
+        var receipt = _receipts.FirstOrDefault(receipt => receipt.Id == receiptId);
+        return Task.FromResult(receipt);
     }
 
     public Task<IEnumerable<Receipt>> GetReceiptsAsync(CancellationToken cancellationToken = default)

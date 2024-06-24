@@ -3,8 +3,10 @@ using System.Text.Json.Serialization;
 using Asp.Versioning;
 using BackendService.Configuration;
 using BackendService.Features.Infrastructure;
-using BackendService.Repositories;
+using BackendService.Repositories.Database;
 using BackendService.Repositories.FileStorage;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,8 +16,32 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 builder.Services.AddOptions<AzureAiVisionConfig>().Bind(builder.Configuration.GetSection(AzureAiVisionConfig.SectionName));
 builder.Services.AddOptions<BlobStorageConfig>().Bind(builder.Configuration.GetSection(BlobStorageConfig.SectionName));
-builder.Services.AddSingleton<IExpenseRepository, InMemoryExpenseRepository>();
+builder.Services.AddOptions<CosmosDbConfig>().Bind(builder.Configuration.GetSection(CosmosDbConfig.SectionName));
+builder.Services.AddSingleton<IExpenseRepository, CosmosDbRepository>();
 builder.Services.AddSingleton<IFileStorage, BlobStorage>();
+
+// Use a Singleton instance of the CosmosClient
+builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
+{
+    var handler = new SocketsHttpHandler
+    {
+        // Customize this value based on desired DNS refresh timer
+        PooledConnectionLifetime = TimeSpan.FromMinutes(5)
+    };
+    var cosmosClientOptions = new CosmosClientOptions()
+    {
+        HttpClientFactory = () => new HttpClient(handler, disposeHandler: false),
+        SerializerOptions = new CosmosSerializationOptions
+        {
+            IgnoreNullValues = true,
+            Indented = true,
+            PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase,
+        }
+    };
+
+    var options = serviceProvider.GetRequiredService<IOptions<CosmosDbConfig>>();
+    return new CosmosClient(options.Value.ConnectionString, cosmosClientOptions);
+});
 
 
 builder.Services.AddApiVersioning(options =>

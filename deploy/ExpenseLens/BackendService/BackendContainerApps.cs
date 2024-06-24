@@ -16,7 +16,8 @@ public class BackendContainerApps : IPulumiRegionalResource
         ExpenseLensResourceGroup resourceGroup,
         DocumentStorageAccount documentStorageAccount,
         DocumentIntelligenceService documentIntelligenceService,
-        ExpenseLensContainerRegistry containerRegistry)
+        ExpenseLensContainerRegistry containerRegistry,
+        CosmosDatabase cosmosDatabase)
     {
         var managedEnvironment = new ManagedEnvironment(names.BackendContainerAppEnvironmentName, new ManagedEnvironmentArgs
         {
@@ -92,6 +93,21 @@ public class BackendContainerApps : IPulumiRegionalResource
                             {
                                 Name = "BlobStorage__StorageAccountName",
                                 Value = documentStorageAccount.Name,
+                            },
+                            new EnvironmentVarArgs
+                            {
+                                Name = "CosmosDb__ConnectionString",
+                                Value = cosmosDatabase.ConnectionString,
+                            },
+                            new EnvironmentVarArgs
+                            {
+                                Name = "CosmosDb__Databasename",
+                                Value = names.CosmosDatabaseName,
+                            },
+                            new EnvironmentVarArgs
+                            {
+                                Name = "CosmosDb__DocumentsContainerName",
+                                Value = names.CosmosDatabaseDocumentsContainerName,
                             },
                             new EnvironmentVarArgs
                             {

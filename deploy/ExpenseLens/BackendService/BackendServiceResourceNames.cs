@@ -16,6 +16,10 @@ public class BackendServiceResourceNames : ResourceNames
     public string BackendContainerImageVersion => System.Environment.GetEnvironmentVariable("IMAGE_VERSION") ?? "37663a75b00a2ecf71fba97c5e5fcc80fb9fd817";
     public string DocumentIntelligenceServiceName => Resolve("expense-lens-doc-intelligence-service");
 
+    public string CosmosDatabaseAccountName => Resolve("expense-lens-db-account");
+    public string CosmosDatabaseName => Resolve("expense-lens-db");
+    public string CosmosDatabaseDocumentsContainerName => Resolve("documents");
+
     public BackendServiceResourceNames(DeploymentConfig config) : base(config)
     {
     }

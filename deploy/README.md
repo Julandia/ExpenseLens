@@ -60,7 +60,7 @@ $env:AZURE_STORAGE_key = <key>
 pulumi stack init --secrets-provider="azurekeyvault://expenselens-pulumi.vault.azure.net/keys/pulumi-secret-provider"
 ```
 
-## Deploy locally (optional)
+## Deploy Locally (optional)
 ```pwsh
 cd deploy\ExpenseLens
 az login
@@ -74,6 +74,12 @@ To deploy Functions, find the FunctionApp name, run
 cd src\Functions
 az login
 func azure functionapp publish <functionname>
-func azure functionapp publish <functionname> --publish-settings-only
 ```
+
+## Deploy from GitHub Workflow
+After initial deployment to an environment, add/update following variables and secrets to GitHub repository.
+- Environment variable: AZURE_FUNCTIONAPP_NAME
+- Environment secret: AZURE_FUNCTIONAPP_PUBLISH_PROFILE
+
+
 

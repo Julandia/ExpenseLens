@@ -59,6 +59,11 @@ public class DocumentHandlerFunctions : IPulumiRegionalResource
                     },
                     new NameValuePairArgs
                     {
+                        Name = "FUNCTIONS_EXTENSION_VERSION",
+                        Value = "~4",
+                    },
+                    new NameValuePairArgs
+                    {
                         Name = "ExpenseLensServiceHost",
                         Value = backendContainerApps.Endpoint,
                     },

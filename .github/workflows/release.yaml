@@ -28,7 +28,7 @@ jobs:
       # github.ref will be 'refs/tags/v0.0.x, we want the v0.0.x
       - name: Extract version from tag
         run: |
-          echo "version=${GITHUB_REF##*/v}" >> "$GITHUB_OUTPUT"
+          echo "version=v${GITHUB_REF##*/v}" >> "$GITHUB_OUTPUT"
           echo "The version is ${GITHUB_REF##*/v}"
         id: extract_tag
 

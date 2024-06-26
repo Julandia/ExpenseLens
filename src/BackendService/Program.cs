@@ -40,6 +40,7 @@ var loggerFactory = LoggerFactory.Create(builder =>
         options.AddAzureMonitorLogExporter();
     });
 });
+builder.Services.AddSingleton<ILoggerFactory>(loggerFactory);
 
 // Use a Singleton instance of the CosmosClient
 builder.Services.AddSingleton<CosmosClient>(serviceProvider =>

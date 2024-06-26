@@ -37,7 +37,7 @@ public class CosmosDbRepository : IExpenseRepository
     {
         var response = await _documentsContainer.ReadItemAsync<Receipt>(
             partitionKey: new PartitionKey(DocumentCategory.Receipt.ToString()),
-            id: receiptId.ToString()
+            id: receiptId
         );
         return response.Resource;
     }

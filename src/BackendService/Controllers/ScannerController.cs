@@ -22,4 +22,16 @@ public class ScannerController : ControllerBase
             _ => NotFound(),
             res => Ok(res.Value));
     }
+
+    [HttpGet("receipts/{receiptId}")]
+    [ProducesResponseType(typeof(GetReceiptResponse), 200)]
+    public async Task<IActionResult> GetReceipt([FromRoute] string receiptId,
+        [FromServices] GetReceiptHandler handler,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await handler.Handle(new GetReceiptCommand(receiptId), cancellationToken);
+        return response.Match<IActionResult>(
+            _ => NotFound(),
+            res => Ok(res.Value));
+    }
 }

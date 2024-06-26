@@ -1,10 +1,12 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Asp.Versioning;
+using BackendService;
 using BackendService.Configuration;
 using BackendService.Features.Infrastructure;
 using BackendService.Repositories.Database;
 using BackendService.Repositories.FileStorage;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
 
@@ -19,6 +21,8 @@ builder.Services.AddOptions<BlobStorageConfig>().Bind(builder.Configuration.GetS
 builder.Services.AddOptions<CosmosDbConfig>().Bind(builder.Configuration.GetSection(CosmosDbConfig.SectionName));
 builder.Services.AddSingleton<IExpenseRepository, CosmosDbRepository>();
 builder.Services.AddSingleton<IFileStorage, BlobStorage>();
+builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.AddSingleton<ITelemetryInitializer, ExpenseLensTelemetryInitializer>();
 
 // Use a Singleton instance of the CosmosClient
 builder.Services.AddSingleton<CosmosClient>(serviceProvider =>

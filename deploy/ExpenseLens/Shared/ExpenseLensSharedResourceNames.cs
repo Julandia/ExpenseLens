@@ -10,6 +10,7 @@ public class ExpenseLensSharedResourceNames : ResourceNames
     public string ContainerRegistryAccessRoleAssignmentName => Resolve("expenselens-acr-access-role-assignment");
     public string ExpenseLensSharedResourceGroupName => Resolve("expense-lens-rg-{env}");
 
+    public string ExpenseLensAppInsightsResourceNames => Resolve("expense-lens-app-insights-{env}");
     public ExpenseLensSharedResourceNames(DeploymentConfig config) : base(config)
     {
     }

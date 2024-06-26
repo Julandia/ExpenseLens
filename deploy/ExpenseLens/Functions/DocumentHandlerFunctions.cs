@@ -14,8 +14,8 @@ public class DocumentHandlerFunctions : IPulumiRegionalResource
         FunctionResourceNames names,
         DocumentStorageAccount documentStorageAccount,
         BackendContainerApps backendContainerApps,
-        ExpenseLensResourceGroup resourceGroup
-    )
+        ExpenseLensResourceGroup resourceGroup,
+        ApplicationInsights appInsights)
     {
         var appServicePlan = new AppServicePlan(names.AppServicePlanName, new AppServicePlanArgs
         {
@@ -28,14 +28,6 @@ public class DocumentHandlerFunctions : IPulumiRegionalResource
             },
         });
 
-        var appInsights = new Component(names.AppInsightsName, new ComponentArgs
-        {
-            ResourceGroupName = resourceGroup.Name,
-            Location = resourceGroup.Location,
-            ApplicationType = "web",
-            IngestionMode = "ApplicationInsights",
-            Kind = "web",
-        });
 
         var functionApp = new WebApp(names.FunctionAppName, new WebAppArgs
         {
@@ -70,7 +62,7 @@ public class DocumentHandlerFunctions : IPulumiRegionalResource
                     new NameValuePairArgs
                     {
                         Name = "APPINSIGHTS_INSTRUMENTATIONKEY",
-                        Value = appInsights.InstrumentationKey.Apply(key => key)
+                        Value = appInsights.InstrumentationKey,
                     }
                 },
                 Http20Enabled = true,

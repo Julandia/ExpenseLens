@@ -23,6 +23,7 @@ builder.Services.AddSingleton<IExpenseRepository, CosmosDbRepository>();
 builder.Services.AddSingleton<IFileStorage, BlobStorage>();
 builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.AddSingleton<ITelemetryInitializer, ExpenseLensTelemetryInitializer>();
+builder.Services.AddLogging();
 
 // Use a Singleton instance of the CosmosClient
 builder.Services.AddSingleton<CosmosClient>(serviceProvider =>

@@ -25,7 +25,7 @@ public class GetReceiptHandler : IRequestHandler<GetReceiptCommand, OneOf<NotFou
 
     public async Task<OneOf<NotFound, Success<GetReceiptResponse>>> Handle(GetReceiptCommand command, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Retrieving receipt {command.ReceiptId}");
+        _logger.LogWarning($"Retrieving receipt {command.ReceiptId}");
 
         var receipt = await _expenseRepository.GetReceiptAsync(command.ReceiptId, cancellationToken);
 

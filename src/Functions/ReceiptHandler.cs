@@ -18,7 +18,7 @@ public class ReceiptHandler
     [Function(nameof(ReceiptHandler))]
     public async Task Run([BlobTrigger("receipts/{name}", Connection = "AzureWebJobsStorage")] Stream stream, string name)
     {
-        _logger.LogInformation("Blob trigger function Processing blob\n {Name}", name);
+        _logger.LogWarning("Blob trigger function Processing blob\n {Name}", name);
         var response = await _expenseLensServiceClient.ScanReceipt(new { fileName = name});
         if (!response.IsSuccessStatusCode) {
             string errorMessage = await response.Content.ReadAsStringAsync();

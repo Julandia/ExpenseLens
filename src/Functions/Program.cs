@@ -1,13 +1,15 @@
+using ExpenseLens.Functions;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Refit;
-using Functions;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureServices(services => {
         services.AddApplicationInsightsTelemetryWorkerService();
+        services.AddSingleton<ITelemetryInitializer, ExpenseLensTelemetryInitializer>();
         services.ConfigureFunctionsApplicationInsights();
         services.AddHttpClient("ExpenseLens", (sp, client) =>
         {

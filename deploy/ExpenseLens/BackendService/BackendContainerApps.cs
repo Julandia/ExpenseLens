@@ -17,7 +17,8 @@ public class BackendContainerApps : IPulumiRegionalResource
         DocumentStorageAccount documentStorageAccount,
         DocumentIntelligenceService documentIntelligenceService,
         ExpenseLensContainerRegistry containerRegistry,
-        CosmosDatabase cosmosDatabase)
+        CosmosDatabase cosmosDatabase,
+        ApplicationInsights appInsights)
     {
         var managedEnvironment = new ManagedEnvironment(names.BackendContainerAppEnvironmentName, new ManagedEnvironmentArgs
         {
@@ -113,6 +114,11 @@ public class BackendContainerApps : IPulumiRegionalResource
                             {
                                 Name = "ASPNETCORE_ENVIRONMENT",
                                 Value = config.DeploymentEnvironment.CurrentEnvironment.Name,
+                            },
+                            new EnvironmentVarArgs
+                            {
+                                Name = "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                                Value = appInsights.ConnectionString,
                             },
                         },
                     },

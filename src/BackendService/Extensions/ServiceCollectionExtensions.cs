@@ -32,11 +32,12 @@ public static class ServiceCollectionExtensions
         {
             var serviceInfo = serviceProvider.GetRequiredService<IOptions<ServiceInfoConfig>>().Value;
             loggerConfiguration
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
                 .Enrich.WithProperty("ServiceVersion", serviceInfo.Version)
                 .Enrich.WithProperty("ServiceName", serviceInfo.Name)
                 .Enrich.WithProperty("Project", serviceInfo.Project)
                 .MinimumLevel.Information()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                 .MinimumLevel.Override("Serilog.AspNetCore.RequestLoggingMiddleware", LogEventLevel.Warning)
                 .MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning);

@@ -122,12 +122,12 @@ public class BackendContainerApps : IPulumiRegionalResource
                             },
                             new EnvironmentVarArgs
                             {
-                                Name = "ServiceInfo_Version",
+                                Name = "ServiceInfo__Version",
                                 Value = names.BackendContainerImageVersion,
                             },
                             new EnvironmentVarArgs
                             {
-                                Name = "ServiceInfo_Name",
+                                Name = "ServiceInfo__Name",
                                 Value = names.BackendServiceName,
                             },
                         },

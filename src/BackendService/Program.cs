@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Asp.Versioning;
+using Azure.Monitor.OpenTelemetry.Exporter;
 using BackendService.Configuration;
 using BackendService.Extensions;
 using BackendService.Features.Infrastructure;
@@ -8,6 +9,7 @@ using BackendService.Repositories.Database;
 using BackendService.Repositories.FileStorage;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
+using OpenTelemetry;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +23,19 @@ builder.Services.AddOptions<BlobStorageConfig>().Bind(builder.Configuration.GetS
 builder.Services.AddOptions<CosmosDbConfig>().Bind(builder.Configuration.GetSection(CosmosDbConfig.SectionName));
 builder.Services.AddSingleton<IExpenseRepository, CosmosDbRepository>();
 builder.Services.AddSingleton<IFileStorage, BlobStorage>();
+
+var tracerProvider = Sdk.CreateTracerProviderBuilder()
+    .AddAzureMonitorTraceExporter();
+var metricsProvider = Sdk.CreateMeterProviderBuilder()
+    .AddAzureMonitorMetricExporter();
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddOpenTelemetry(options =>
+    {
+        options.AddAzureMonitorLogExporter();
+    });
+});
+builder.Services.AddSingleton<ILoggerFactory>(loggerFactory);
 builder.Services.AddExpenseLensLogging();
 
 // Use a Singleton instance of the CosmosClient

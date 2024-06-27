@@ -120,6 +120,16 @@ public class BackendContainerApps : IPulumiRegionalResource
                                 Name = "APPLICATIONINSIGHTS_CONNECTION_STRING",
                                 Value = appInsights.ConnectionString,
                             },
+                            new EnvironmentVarArgs
+                            {
+                                Name = "ServiceInfo_Version",
+                                Value = names.BackendContainerImageVersion,
+                            },
+                            new EnvironmentVarArgs
+                            {
+                                Name = "ServiceInfo_Name",
+                                Value = names.BackendServiceName,
+                            },
                         },
                     },
                 },

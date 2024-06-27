@@ -1,16 +1,14 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Asp.Versioning;
-using Azure.Monitor.OpenTelemetry.Exporter;
-using BackendService;
 using BackendService.Configuration;
+using BackendService.Extensions;
 using BackendService.Features.Infrastructure;
 using BackendService.Repositories.Database;
 using BackendService.Repositories.FileStorage;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
-using OpenTelemetry;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,24 +21,7 @@ builder.Services.AddOptions<BlobStorageConfig>().Bind(builder.Configuration.GetS
 builder.Services.AddOptions<CosmosDbConfig>().Bind(builder.Configuration.GetSection(CosmosDbConfig.SectionName));
 builder.Services.AddSingleton<IExpenseRepository, CosmosDbRepository>();
 builder.Services.AddSingleton<IFileStorage, BlobStorage>();
-//builder.Services.AddApplicationInsightsTelemetry();
-builder.Services.AddSingleton<ITelemetryInitializer, ExpenseLensTelemetryInitializer>();
-var tracerProvider = Sdk.CreateTracerProviderBuilder()
-    .AddAzureMonitorTraceExporter();
-var metricsProvider = Sdk.CreateMeterProviderBuilder()
-    .AddAzureMonitorMetricExporter();
-
-// Create a new logger factory.
-// It is important to keep the LoggerFactory instance active throughout the process lifetime.
-// See https://github.com/open-telemetry/opentelemetry-dotnet/tree/main/docs/logs#logger-management
-var loggerFactory = LoggerFactory.Create(builder =>
-{
-    builder.AddOpenTelemetry(options =>
-    {
-        options.AddAzureMonitorLogExporter();
-    });
-});
-builder.Services.AddSingleton<ILoggerFactory>(loggerFactory);
+builder.Services.AddExpenseLensLogging();
 
 // Use a Singleton instance of the CosmosClient
 builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
@@ -48,7 +29,7 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
     var handler = new SocketsHttpHandler
     {
         // Customize this value based on desired DNS refresh timer
-        PooledConnectionLifetime = TimeSpan.FromMinutes(5)
+        PooledConnectionLifetime = TimeSpan.FromMinutes(5),
     };
     var cosmosClientOptions = new CosmosClientOptions()
     {
@@ -82,6 +63,8 @@ builder.Services.AddSwaggerGen();
 // TODO: add swagger documentation
 
 var app = builder.Build();
+
+app.UseSerilogRequestLogging();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

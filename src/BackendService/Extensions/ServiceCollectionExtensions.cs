@@ -17,11 +17,11 @@ public static class ServiceCollectionExtensions
                 .Enrich.WithProperty("ServiceVersion", serviceInfo.Version)
                 .Enrich.WithProperty("ServiceName", serviceInfo.Name)
                 .Enrich.WithProperty("Project", serviceInfo.Project)
-                .MinimumLevel.Information()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-                .MinimumLevel.Override("Serilog.AspNetCore.RequestLoggingMiddleware", LogEventLevel.Warning)
-                .MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning);
+                .MinimumLevel.Information();
+            // .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            // .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+            // .MinimumLevel.Override("Serilog.AspNetCore.RequestLoggingMiddleware", LogEventLevel.Warning)
+            // .MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning);
         });
     }
 }

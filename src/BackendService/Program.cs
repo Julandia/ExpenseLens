@@ -13,7 +13,6 @@ using OpenTelemetry;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));

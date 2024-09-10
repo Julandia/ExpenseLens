@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Asp.Versioning;
-using Azure.Monitor.OpenTelemetry.Exporter;
 using BackendService.Configuration;
 using BackendService.Extensions;
 using BackendService.Features.Infrastructure;
@@ -9,8 +8,6 @@ using BackendService.Repositories.Database;
 using BackendService.Repositories.FileStorage;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
-using OpenTelemetry;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -20,21 +17,12 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddOptions<AzureAiVisionConfig>().Bind(builder.Configuration.GetSection(AzureAiVisionConfig.SectionName));
 builder.Services.AddOptions<BlobStorageConfig>().Bind(builder.Configuration.GetSection(BlobStorageConfig.SectionName));
 builder.Services.AddOptions<CosmosDbConfig>().Bind(builder.Configuration.GetSection(CosmosDbConfig.SectionName));
+builder.Services.AddOptions<LoggingConfig>().Bind(builder.Configuration.GetSection(LoggingConfig.SectionName));
+builder.Services.AddOptions<ServiceInfoConfig>().Bind(builder.Configuration.GetSection(ServiceInfoConfig.SectionName));
 builder.Services.AddSingleton<IExpenseRepository, CosmosDbRepository>();
 builder.Services.AddSingleton<IFileStorage, BlobStorage>();
 
-var tracerProvider = Sdk.CreateTracerProviderBuilder()
-    .AddAzureMonitorTraceExporter();
-var metricsProvider = Sdk.CreateMeterProviderBuilder()
-    .AddAzureMonitorMetricExporter();
-var loggerFactory = LoggerFactory.Create(builder =>
-{
-    builder.AddOpenTelemetry(options =>
-    {
-        options.AddAzureMonitorLogExporter();
-    });
-});
-builder.Services.AddSingleton<ILoggerFactory>(loggerFactory);
+//builder.Services.AddOpenTelemetry();
 builder.Services.AddExpenseLensLogging();
 
 // Use a Singleton instance of the CosmosClient
@@ -74,13 +62,11 @@ builder.Services.AddApiVersioning(options =>
     });
 builder.Services.AddConfiguredRequestHandlers();
 builder.Services.AddSwaggerGen();
-// TODO: add swagger documentation
 
 var app = builder.Build();
 
-app.UseSerilogRequestLogging();
+//app.UseSerilogRequestLogging();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

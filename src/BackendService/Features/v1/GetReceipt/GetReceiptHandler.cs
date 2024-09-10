@@ -13,10 +13,7 @@ public class GetReceiptHandler : IRequestHandler<GetReceiptCommand, OneOf<NotFou
     private readonly IExpenseRepository _expenseRepository;
     private readonly ILogger<GetReceiptHandler> _logger;
 
-    public GetReceiptHandler(IOptions<AzureAiVisionConfig> options,
-        IOptions<BlobStorageConfig> blobStorageOptions,
-        IFileStorage fileStorage,
-        IExpenseRepository expenseRepository,
+    public GetReceiptHandler(IExpenseRepository expenseRepository,
         ILogger<GetReceiptHandler> logger)
     {
         _expenseRepository = expenseRepository;
@@ -25,7 +22,7 @@ public class GetReceiptHandler : IRequestHandler<GetReceiptCommand, OneOf<NotFou
 
     public async Task<OneOf<NotFound, Success<GetReceiptResponse>>> Handle(GetReceiptCommand command, CancellationToken cancellationToken)
     {
-        _logger.LogWarning($"Retrieving receipt {command.ReceiptId}");
+        _logger.LogInformation($"Retrieving receipt {command.ReceiptId}");
 
         var receipt = await _expenseRepository.GetReceiptAsync(command.ReceiptId, cancellationToken);
 

@@ -27,6 +27,8 @@ indent_size = 2
 [*.template]
 indent_size = 2
 
+#dummychange
+
 # Code files
 ###############################
 # .NET Coding Conventions     #
